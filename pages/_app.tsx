@@ -12,9 +12,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"
         />
-        <meta name="description" content="Description" />
-        <meta name="keywords" content="Keywords" />
-        <title>Next.js PWA Example</title>
+        <meta name="description" content="Generate a quiz using common words in the english language." />
+        <meta name="keywords" content="Spelling, Quiz, Spelling Quiz" />
+        <title>Spelling Quiz</title>
 
         <link rel="manifest" href="/manifest.json" />
         <link
