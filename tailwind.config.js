@@ -10,7 +10,8 @@ module.exports = {
     extend:
     {
       fontFamily: {
-        'comic': ["Comic Sans MS", "Comic Sans", "Apple Chancery", "cursive"],
+        'comic': ["LDFComicSans"],
+        // 'comic': ["Comic Sans MS", "Comic Sans", "Apple Chancery", "cursive"],
         'cursive': ["Brush Script MT", "Brush Script Std", "cursive"]
       },
     },

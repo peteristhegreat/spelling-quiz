@@ -1,0 +1,28 @@
+
+@font-face {
+    font-family: 'LDFComicSans';
+    src: local(''), url('/fonts/comic/LDFComicSans.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'LDFComicSansBold';
+    src: local(''), url('/fonts/comic/LDFComicSansBold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'LDFComicSansHairline';
+    src: local(''), url('/fonts/comic/LDFComicSansHairline.ttf') format('truetype');
+    font-weight: lighter;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'LDFComicSansLight';
+    src: local(''), url('/fonts/comic/LDFComicSansLight.ttf') format('truetype');
+    font-weight: lighter;
+    font-style: normal;
+}
