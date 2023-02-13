@@ -32,7 +32,8 @@ const font_options = [
 	{ label: 'Comic', value: 'font-comic' },
 	{ label: 'Sans', value: 'font-sans' },
 	{ label: 'Serif', value: 'font-serif' },
-	{ label: 'Mono', value: 'font-mono' }
+	{ label: 'Mono', value: 'font-mono' },
+	{ label: 'Cursive', value: 'font-cursive' }
 	// { label: 'Dyslexic', value: 'font-dyslexic' }
 ];
 
@@ -186,7 +187,7 @@ const WordList: React.FC = () => {
 				</div>
 			</form>
 
-			<div className="flex text-lg justify-between">
+			<div className="flex text-lg justify-between m-6">
 				<div>Name: ____________ </div>
 				<div>
 					Quiz - {new Intl.DateTimeFormat('en-US').format(new Date())}
