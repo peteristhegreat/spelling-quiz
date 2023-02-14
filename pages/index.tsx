@@ -37,6 +37,28 @@ const font_options = [
 	// { label: 'Dyslexic', value: 'font-dyslexic' }
 ];
 
+const color_options = [
+	{ label: 'Black', value: '' },
+	{ label: 'Blue', value: 'text-blue-900 marker:text-blue-900' },
+	{ label: 'Red', value: 'text-red-900 marker:text-red-900' },
+	{ label: 'Green', value: 'text-green-900 marker:text-green-900' },
+	{ label: 'Gray', value: 'text-gray-600 marker:text-gray-600' }
+	// { label: 'Dyslexic', value: 'font-dyslexic' }
+];
+
+// tracking-tighter	letter-spacing: -0.05em;
+// tracking-tight	letter-spacing: -0.025em;
+// tracking-normal	letter-spacing: 0em;
+// tracking-wide	letter-spacing: 0.025em;
+// tracking-wider	letter-spacing: 0.05em;
+// tracking-widest	letter-spacing: 0.1em;
+const letter_spacing_options = [
+	{ label: 'Tight', value: 'tracking-tight' },
+	{ label: 'Normal', value: '' },
+	{ label: 'Wide', value: 'tracking-wide' },
+	{ label: 'Widest', value: 'tracking-widest' },
+];
+
 const size_options = [
 	{ label: '14px', value: 'text-sm' },
 	{ label: '16px', value: 'text-base' },
@@ -73,7 +95,9 @@ interface FormData {
 	margins: string;
 	font: string;
 	size: string;
+	color: string;
 	lineHeight: string;
+	letterSpacing: string;
 }
 
 const WordList: React.FC = () => {
@@ -90,13 +114,15 @@ const WordList: React.FC = () => {
 	const lineHeight = watch('lineHeight');
 	const margins = watch('margins');
 	const size = watch('size');
+	const color = watch('color');
+	const letterSpacing = watch('letterSpacing');
 
 	const onSubmit = (data: FormData) => {
 		setDisplayedWords(shuffle(words).slice(0, data.numberOfWords));
 	};
 
 	return (
-		<div className="max-w-none prose md:prose-lg lg:prose-xl w-full m-6">
+		<div className="max-w-none prose md:prose-lg lg:prose-xl w-full m-6 text-gra">
 			<form className="block" onSubmit={handleSubmit(onSubmit)}>
 				<div className="flex flex-wrap ml-auto print:hidden">
 					<div className="mx-2">
@@ -116,7 +142,7 @@ const WordList: React.FC = () => {
 						Font
 						<select className="form-select" {...register('font')}>
 							{font_options.map(({ value, label }) => (
-								<option key={value} value={value}>
+								<option key={value} value={value} className={value}>
 									{label}
 								</option>
 							))}
@@ -127,6 +153,34 @@ const WordList: React.FC = () => {
 						<select className="form-select" {...register('size')}>
 							{size_options.map(({ value, label }) => (
 								<option key={value} value={value}>
+									{label}
+								</option>
+							))}
+						</select>
+					</div>
+					<div className="mx-2">
+						Color
+						<select className="form-select" {...register('color')}>
+							{color_options.map(({ value, label }) => (
+								<option
+									key={value}
+									value={value}
+									className={`text-white ${value}`}
+								>
+									{label}
+								</option>
+							))}
+						</select>
+					</div>
+					<div className="mx-2">
+						Letter Spacing
+						<select className="form-select" {...register('letterSpacing')} defaultValue="">
+							{letter_spacing_options.map(({ value, label }) => (
+								<option
+									key={value}
+									value={value}
+									className={value}
+								>
 									{label}
 								</option>
 							))}
@@ -187,7 +241,7 @@ const WordList: React.FC = () => {
 				</div>
 			</form>
 
-			<div className="flex text-lg justify-between m-6">
+			<div className={`flex text-lg justify-between m-6 ${color}`}>
 				<div>Name: ____________ </div>
 				<div>
 					Quiz - {new Intl.DateTimeFormat('en-US').format(new Date())}
@@ -195,16 +249,16 @@ const WordList: React.FC = () => {
 				<div>Score: ____________ </div>
 			</div>
 			<div
-				className={`flex justify-center w-full ${font} ${margins} ${size}  ${lineHeight}`}
+				className={`flex justify-center w-full ${font} ${margins} ${size} ${color} ${lineHeight} ${letterSpacing}`}
 			>
-				<div className="grid grid-cols-2 gap-4 mx-auto">
-					<ol className="m-6 list-decimal">
+				<div className="grid grid-cols-2 gap-8 mx-auto">
+					<ol className="mt-6 list-decimal">
 						{displayedWords.map((word, index) => (
 							<li key={index}>{word}</li>
 						))}
 					</ol>
 
-					<ol className="m-6 list-decimal">
+					<ol className="mt-6 list-decimal">
 						{shuffle(displayedWords).map((word, index) => (
 							<li key={index}>{replaceMiddleLetters(word)}</li>
 						))}
