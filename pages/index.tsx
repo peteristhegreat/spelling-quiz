@@ -15,17 +15,16 @@ function replaceMiddleLetters(word: string): string {
 	return first + middle + last;
 }
 
-const margin_options = [
-	{ label: 'Min', value: 'mx-2' },
-	{ label: '10', value: 'mx-10' },
-	{ label: '20', value: 'mx-20' },
-	{ label: '32', value: 'mx-32' },
-	{ label: '44', value: 'mx-44' },
-	{ label: '56', value: 'mx-56' },
-	{ label: '64', value: 'mx-64' },
-	{ label: '72', value: 'mx-72' },
-	{ label: '80', value: 'mx-80' },
-	{ label: 'Max', value: 'mx-96' }
+const gap_size_options = [
+	{ label: 'Min', value: 'gap-2' },
+	{ label: '4', value: 'gap-4' },
+	{ label: '6', value: 'gap-6' },
+	{ label: '8', value: 'gap-8' },
+	{ label: '10', value: 'gap-10' },
+	{ label: '12', value: 'gap-12' },
+	{ label: '14', value: 'gap-14' },
+	{ label: '16', value: 'gap-16' },
+	{ label: 'Max', value: 'gap-20' },
 ];
 
 const font_options = [
@@ -92,7 +91,7 @@ const line_height_options = [
 
 interface FormData {
 	numberOfWords: number;
-	margins: string;
+	gapSize: string;
 	font: string;
 	size: string;
 	color: string;
@@ -112,7 +111,7 @@ const WordList: React.FC = () => {
 
 	const font = watch('font');
 	const lineHeight = watch('lineHeight');
-	const margins = watch('margins');
+	const gapSize = watch('gapSize');
 	const size = watch('size');
 	const color = watch('color');
 	const letterSpacing = watch('letterSpacing');
@@ -126,12 +125,12 @@ const WordList: React.FC = () => {
 			<form className="block" onSubmit={handleSubmit(onSubmit)}>
 				<div className="flex flex-wrap ml-auto print:hidden">
 					<div className="mx-2">
-						Margins
+						Column Gap
 						<select
 							className="form-select"
-							{...register('margins')}
+							{...register('gapSize')}
 						>
-							{margin_options.map(({ value, label }) => (
+							{gap_size_options.map(({ value, label }) => (
 								<option key={value} value={value}>
 									{label}
 								</option>
@@ -249,9 +248,9 @@ const WordList: React.FC = () => {
 				<div>Score: ____________ </div>
 			</div>
 			<div
-				className={`flex justify-center w-full ${font} ${margins} ${size} ${color} ${lineHeight} ${letterSpacing}`}
+				className={`flex justify-center w-full ${font} ${size} ${color} ${lineHeight} ${letterSpacing}`}
 			>
-				<div className="grid grid-cols-2 gap-8 mx-auto">
+				<div className={`grid grid-cols-2 ${gapSize} mx-auto`}>
 					<ol className="mt-6 list-decimal">
 						{displayedWords.map((word, index) => (
 							<li key={index}>{word}</li>
