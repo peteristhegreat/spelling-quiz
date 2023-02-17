@@ -121,7 +121,7 @@ const WordList: React.FC = () => {
 	};
 
 	return (
-		<div className="max-w-none prose md:prose-lg lg:prose-xl w-full m-6 text-gra">
+		<div className="max-w-none prose md:prose-lg lg:prose-xl w-full p-6 text-gra">
 			<form className="block" onSubmit={handleSubmit(onSubmit)}>
 				<div className="flex flex-wrap ml-auto print:hidden">
 					<div className="mx-2">
