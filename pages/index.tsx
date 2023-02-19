@@ -391,10 +391,7 @@ const WordList: React.FC = () => {
 							className={`mt-6 list-none ${writingPracticeWidth}`}
 						>
 							{range(0, displayedWords.length).map((index) => (
-								<li
-									key={index}
-									className={`${borderType} ${writingPracticeWidth}`}
-								>
+								<div key={index}>
 									{['mid', 'triple'].includes(
 										writingPracticeLines
 									) && (
@@ -404,8 +401,13 @@ const WordList: React.FC = () => {
 											&#8203;
 										</div>
 									)}
-									&#8203;
-								</li>
+									<li
+										key={index}
+										className={`${borderType} ${writingPracticeWidth}`}
+									>
+										&#8203;
+									</li>
+								</div>
 							))}
 						</ul>
 					)}
