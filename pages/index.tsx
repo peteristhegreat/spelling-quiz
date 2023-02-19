@@ -15,6 +15,21 @@ function replaceMiddleLetters(word: string): string {
 	return first + middle + last;
 }
 
+const writing_practice_lines = [
+	{ label: 'None', value: '' },
+	{ label: 'Baseline', value: 'base' },
+	// { label: 'Mid + Baseline', value: 'mid' },
+	// { label: 'Triple', value: 'triple' }
+];
+
+const writing_practice_width = [
+	{ label: 'Min', value: 'w-32' },
+	{ label: '1/3', value: 'w-48' },
+	{ label: '1/2', value: 'w-64' },
+	{ label: '2/3', value: 'w-72' },
+	{ label: 'Full', value: 'w-96' }
+];
+
 const gap_size_options = [
 	{ label: 'Min', value: 'gap-2' },
 	{ label: '4', value: 'gap-4' },
@@ -27,7 +42,7 @@ const gap_size_options = [
 	{ label: 'Max', value: 'gap-20' }
 ];
 
-const min_letter = range(1, 10);
+const min_letter = range(1, 15);
 
 const max_letter = range(1, 15);
 
@@ -103,6 +118,8 @@ interface FormData {
 	letterSpacing: string;
 	minLetter: string;
 	maxLetter: string;
+	writingPracticeLines: string;
+	writingPracticeWidth: string;
 }
 
 const WordList: React.FC = () => {
@@ -123,6 +140,8 @@ const WordList: React.FC = () => {
 	const letterSpacing = watch('letterSpacing');
 	const minLetter = watch('minLetter');
 	const maxLetter = watch('maxLetter');
+	const writingPracticeLines = watch('writingPracticeLines');
+	const writingPracticeWidth = watch('writingPracticeWidth');
 
 	const onSubmit = (data: FormData) => {
 		const minL = parseInt(data.minLetter);
@@ -130,10 +149,7 @@ const WordList: React.FC = () => {
 		setDisplayedWords(
 			shuffle(
 				filter(words, (word) => {
-					return (
-						word.length >= minL &&
-						word.length <= maxL
-					);
+					return word.length >= minL && word.length <= maxL;
 				})
 			).slice(0, data.numberOfWords)
 		);
@@ -226,6 +242,32 @@ const WordList: React.FC = () => {
 						</select>
 					</div>
 					<div className="mx-2">
+						Writing Practice Lines
+						<select
+							className="form-select"
+							{...register('writingPracticeLines')}
+						>
+							{writing_practice_lines.map(({ value, label }) => (
+								<option key={value} value={value}>
+									{label}
+								</option>
+							))}
+						</select>
+					</div>
+					<div className="mx-2">
+						Writing Practice Width
+						<select
+							className="form-select"
+							{...register('writingPracticeWidth')}
+						>
+							{writing_practice_width.map(({ value, label }) => (
+								<option key={value} value={value}>
+									{label}
+								</option>
+							))}
+						</select>
+					</div>
+					<div className="mx-2">
 						Min Letter
 						<select
 							className="form-select"
@@ -305,19 +347,34 @@ const WordList: React.FC = () => {
 			<div
 				className={`flex justify-center w-full ${font} ${size} ${color} ${lineHeight} ${letterSpacing}`}
 			>
-				<div className={`grid grid-cols-2 ${gapSize} mx-auto`}>
+				<div
+					className={`grid grid-cols-${
+						writingPracticeLines ? 3 : 2
+					} ${gapSize || ''} mx-auto`}
+				>
 					<ol className="mt-6 list-decimal">
 						{displayedWords.map((word, index) => (
-							<li key={index}>{word}</li>
+							<li key={index} className="border-b-2 border-transparent">{word}</li>
 						))}
 					</ol>
 
 					<ol className="mt-6 list-decimal">
 						{shuffle(displayedWords).map((word, index) => (
-							<li key={index}>{replaceMiddleLetters(word)}</li>
+							<li key={index} className="border-b-2 border-transparent">{replaceMiddleLetters(word)}</li>
 						))}
 					</ol>
+					{writingPracticeLines && (
+						<ul
+							className={`mt-6 list-none ${writingPracticeWidth}`}
+						>
+							{range(0, displayedWords.length).map((index) => (
+								<li key={index} className={`border-b-2 ${writingPracticeWidth}`}>&nbsp;
+								</li>
+							))}
+						</ul>
+					)}
 				</div>
+				<div className="grid-cols-2 grid-cols-3"></div>
 			</div>
 		</div>
 	);
