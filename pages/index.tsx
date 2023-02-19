@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { repeat, shuffle } from 'lodash';
+import { filter, max, min, range, repeat, shuffle } from 'lodash';
 
 import { words } from '../utils/words';
 
@@ -24,8 +24,12 @@ const gap_size_options = [
 	{ label: '12', value: 'gap-12' },
 	{ label: '14', value: 'gap-14' },
 	{ label: '16', value: 'gap-16' },
-	{ label: 'Max', value: 'gap-20' },
+	{ label: 'Max', value: 'gap-20' }
 ];
+
+const min_letter = range(1, 10);
+
+const max_letter = range(1, 15);
 
 const font_options = [
 	{ label: 'Comic', value: 'font-comic' },
@@ -55,7 +59,7 @@ const letter_spacing_options = [
 	{ label: 'Tight', value: 'tracking-tight' },
 	{ label: 'Normal', value: '' },
 	{ label: 'Wide', value: 'tracking-wide' },
-	{ label: 'Widest', value: 'tracking-widest' },
+	{ label: 'Widest', value: 'tracking-widest' }
 ];
 
 const size_options = [
@@ -97,6 +101,8 @@ interface FormData {
 	color: string;
 	lineHeight: string;
 	letterSpacing: string;
+	minLetter: string;
+	maxLetter: string;
 }
 
 const WordList: React.FC = () => {
@@ -115,9 +121,22 @@ const WordList: React.FC = () => {
 	const size = watch('size');
 	const color = watch('color');
 	const letterSpacing = watch('letterSpacing');
+	const minLetter = watch('minLetter');
+	const maxLetter = watch('maxLetter');
 
 	const onSubmit = (data: FormData) => {
-		setDisplayedWords(shuffle(words).slice(0, data.numberOfWords));
+		const minL = parseInt(data.minLetter);
+		const maxL = parseInt(data.maxLetter);
+		setDisplayedWords(
+			shuffle(
+				filter(words, (word) => {
+					return (
+						word.length >= minL &&
+						word.length <= maxL
+					);
+				})
+			).slice(0, data.numberOfWords)
+		);
 	};
 
 	return (
@@ -141,7 +160,11 @@ const WordList: React.FC = () => {
 						Font
 						<select className="form-select" {...register('font')}>
 							{font_options.map(({ value, label }) => (
-								<option key={value} value={value} className={value}>
+								<option
+									key={value}
+									value={value}
+									className={value}
+								>
 									{label}
 								</option>
 							))}
@@ -173,7 +196,11 @@ const WordList: React.FC = () => {
 					</div>
 					<div className="mx-2">
 						Letter Spacing
-						<select className="form-select" {...register('letterSpacing')} defaultValue="">
+						<select
+							className="form-select"
+							{...register('letterSpacing')}
+							defaultValue=""
+						>
 							{letter_spacing_options.map(({ value, label }) => (
 								<option
 									key={value}
@@ -194,6 +221,34 @@ const WordList: React.FC = () => {
 							{line_height_options.map(({ value, label }) => (
 								<option key={value} value={value}>
 									{label}
+								</option>
+							))}
+						</select>
+					</div>
+					<div className="mx-2">
+						Min Letter
+						<select
+							className="form-select"
+							{...register('minLetter')}
+							defaultValue={min(min_letter)}
+						>
+							{min_letter.map((value) => (
+								<option key={value} value={value}>
+									{value}
+								</option>
+							))}
+						</select>
+					</div>
+					<div className="mx-2">
+						Max Letter
+						<select
+							className="form-select"
+							defaultValue={max(max_letter)}
+							{...register('maxLetter')}
+						>
+							{max_letter.map((value) => (
+								<option key={value} value={value}>
+									{value}
 								</option>
 							))}
 						</select>
