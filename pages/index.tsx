@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { filter, max, min, range, repeat, shuffle } from 'lodash';
@@ -18,8 +18,8 @@ function replaceMiddleLetters(word: string): string {
 const writing_practice_lines = [
 	{ label: 'None', value: '' },
 	{ label: 'Baseline', value: 'base' },
-	// { label: 'Mid + Baseline', value: 'mid' },
-	// { label: 'Triple', value: 'triple' }
+	{ label: 'Mid + Baseline', value: 'mid' },
+	{ label: 'Triple', value: 'triple' }
 ];
 
 const writing_practice_width = [
@@ -131,6 +131,7 @@ const WordList: React.FC = () => {
 		setValue
 	} = useForm<FormData>();
 	const [displayedWords, setDisplayedWords] = useState<string[]>([]);
+	const [borderType, setBorderType] = useState<string>('');
 
 	const font = watch('font');
 	const lineHeight = watch('lineHeight');
@@ -142,6 +143,18 @@ const WordList: React.FC = () => {
 	const maxLetter = watch('maxLetter');
 	const writingPracticeLines = watch('writingPracticeLines');
 	const writingPracticeWidth = watch('writingPracticeWidth');
+
+	useEffect(() => {
+		// console.log({writingPracticeLines})
+		let bt = '';
+		if (['base', 'mid'].includes(writingPracticeLines)) {
+			bt = 'border-b';
+			// } else if (['mid', 'triple'].includes(writingPracticeLines)) {
+		} else if (writingPracticeLines == 'triple') {
+			bt = 'border-b border-t';
+		}
+		setBorderType(bt);
+	}, [writingPracticeLines]);
 
 	const onSubmit = (data: FormData) => {
 		const minL = parseInt(data.minLetter);
@@ -354,13 +367,23 @@ const WordList: React.FC = () => {
 				>
 					<ol className="mt-6 list-decimal">
 						{displayedWords.map((word, index) => (
-							<li key={index} className="border-b-2 border-transparent">{word}</li>
+							<li
+								key={index}
+								className={`${borderType} border-transparent`}
+							>
+								{word}
+							</li>
 						))}
 					</ol>
 
 					<ol className="mt-6 list-decimal">
 						{shuffle(displayedWords).map((word, index) => (
-							<li key={index} className="border-b-2 border-transparent">{replaceMiddleLetters(word)}</li>
+							<li
+								key={index}
+								className={`${borderType} border-transparent`}
+							>
+								{replaceMiddleLetters(word)}
+							</li>
 						))}
 					</ol>
 					{writingPracticeLines && (
@@ -368,13 +391,27 @@ const WordList: React.FC = () => {
 							className={`mt-6 list-none ${writingPracticeWidth}`}
 						>
 							{range(0, displayedWords.length).map((index) => (
-								<li key={index} className={`border-b-2 ${writingPracticeWidth}`}>&nbsp;
+								<li
+									key={index}
+									className={`${borderType} ${writingPracticeWidth}`}
+								>
+									{['mid', 'triple'].includes(
+										writingPracticeLines
+									) && (
+										<div
+											className={`translate-y-1/2 border-t border-dashed border-gray-600 z-10 absolute ${writingPracticeWidth}`}
+										>
+											&#8203;
+										</div>
+									)}
+									&#8203;
 								</li>
 							))}
 						</ul>
 					)}
 				</div>
-				<div className="grid-cols-2 grid-cols-3"></div>
+				<div className="grid-cols-2 grid-cols-3"></div>{' '}
+				{/* make sure tailwind pre-processes these*/}
 			</div>
 		</div>
 	);
