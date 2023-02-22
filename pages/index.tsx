@@ -171,7 +171,7 @@ const WordList: React.FC = () => {
 	return (
 		<div className="max-w-none prose md:prose-lg lg:prose-xl w-full p-6 text-gra">
 			<form className="block" onSubmit={handleSubmit(onSubmit)}>
-				<div className="flex flex-wrap ml-auto print:hidden">
+				<div className="flex flex-wrap ml-auto print:hidden mb-6">
 					<div className="mx-2">
 						Column Gap
 						<select
@@ -350,7 +350,7 @@ const WordList: React.FC = () => {
 				</div>
 			</form>
 
-			<div className={`flex text-lg justify-between m-6 ${color}`}>
+			<div className={`flex text-lg justify-between mx-6 ${color}`}>
 				<div>Name: ____________ </div>
 				<div>
 					Quiz - {new Intl.DateTimeFormat('en-US').format(new Date())}
@@ -396,7 +396,7 @@ const WordList: React.FC = () => {
 										writingPracticeLines
 									) && (
 										<div
-											className={`translate-y-1/2 border-t border-dashed border-gray-600 z-10 absolute ${writingPracticeWidth}`}
+											className={`translate-y-1/2 border-t border-dashed border-gray-300 z-10 absolute ${writingPracticeWidth}`}
 										>
 											&#8203;
 										</div>
