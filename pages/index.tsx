@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { filter, max, min, range, repeat, shuffle } from 'lodash';
+import { filter, find, max, min, range, repeat, shuffle } from 'lodash';
 
 import { words } from '../utils/words';
+import { LinedTable } from '../components/LinedTable';
 
 function replaceMiddleLetters(word: string): string {
 	if (word.length <= 2) {
@@ -17,9 +18,10 @@ function replaceMiddleLetters(word: string): string {
 
 const writing_practice_lines = [
 	{ label: 'None', value: '' },
+	{ label: 'Triple', value: 'triple' },
 	{ label: 'Baseline', value: 'base' },
 	{ label: 'Mid + Baseline', value: 'mid' },
-	{ label: 'Triple', value: 'triple' }
+	{ label: 'Triple Separate', value: 'triple-separate' }
 ];
 
 const writing_practice_width = [
@@ -132,6 +134,8 @@ const WordList: React.FC = () => {
 	} = useForm<FormData>();
 	const [displayedWords, setDisplayedWords] = useState<string[]>([]);
 	const [borderType, setBorderType] = useState<string>('');
+	const [divideType, setDivideType] = useState<string>('');
+	const [heightPx, setHeightPx] = useState<number>(14);
 
 	const font = watch('font');
 	const lineHeight = watch('lineHeight');
@@ -147,14 +151,27 @@ const WordList: React.FC = () => {
 	useEffect(() => {
 		// console.log({writingPracticeLines})
 		let bt = '';
+		let dt = 'divide-y';
 		if (['base', 'mid'].includes(writingPracticeLines)) {
 			bt = 'border-b';
 			// } else if (['mid', 'triple'].includes(writingPracticeLines)) {
-		} else if (writingPracticeLines == 'triple') {
+		} else if (writingPracticeLines == 'triple-separate') {
 			bt = 'border-b border-t';
 		}
+		// bt = ''; // UNDO ALL
 		setBorderType(bt);
+		// setDivideType(dt);
 	}, [writingPracticeLines]);
+
+	useEffect(() => {
+		const h = parseInt(
+			(
+				find(size_options, ({ value }) => value == size) ||
+				size_options[0]
+			).label.slice(0, -2)
+		);
+		setHeightPx(h || 14);
+	}, [size]);
 
 	const onSubmit = (data: FormData) => {
 		const minL = parseInt(data.minLetter);
@@ -365,7 +382,9 @@ const WordList: React.FC = () => {
 						writingPracticeLines ? 3 : 2
 					} ${gapSize || ''} mx-auto`}
 				>
-					<ol className="mt-6 list-decimal">
+					<ol
+						className={`mt-6 list-decimal ${divideType} divide-transparent`}
+					>
 						{displayedWords.map((word, index) => (
 							<li
 								key={index}
@@ -376,7 +395,9 @@ const WordList: React.FC = () => {
 						))}
 					</ol>
 
-					<ol className="mt-6 list-decimal">
+					<ol
+						className={`mt-6 list-decimal ${divideType} divide-transparent`}
+					>
 						{shuffle(displayedWords).map((word, index) => (
 							<li
 								key={index}
@@ -386,31 +407,45 @@ const WordList: React.FC = () => {
 							</li>
 						))}
 					</ol>
-					{writingPracticeLines && (
-						<ul
-							className={`mt-6 list-none ${writingPracticeWidth}`}
-						>
-							{range(0, displayedWords.length).map((index) => (
-								<div key={index}>
-									{['mid', 'triple'].includes(
-										writingPracticeLines
-									) && (
-										<div
-											className={`translate-y-1/2 border-t border-dashed border-gray-300 z-10 absolute ${writingPracticeWidth}`}
-										>
-											&#8203;
+					{writingPracticeLines &&
+						writingPracticeLines == 'triple' && (
+							<LinedTable
+								numRows={displayedWords.length * 2}
+								widthStyle={writingPracticeWidth}
+								heightPx={heightPx}
+							/>
+						)}
+					{writingPracticeLines &&
+						writingPracticeLines != 'triple' && (
+							<ul
+								className={`mt-6 list-none ${writingPracticeWidth}`}
+							>
+								{range(0, displayedWords.length).map(
+									(index) => (
+										<div key={index}>
+											{[
+												'mid',
+												'triple-separate'
+											].includes(
+												writingPracticeLines
+											) && (
+												<div
+													className={`translate-y-1/2 border-t border-dashed border-gray-300 z-10 absolute ${writingPracticeWidth}`}
+												>
+													&#8203;
+												</div>
+											)}
+											<li
+												key={index}
+												className={`${borderType} ${writingPracticeWidth}`}
+											>
+												&#8203;
+											</li>
 										</div>
-									)}
-									<li
-										key={index}
-										className={`${borderType} ${writingPracticeWidth}`}
-									>
-										&#8203;
-									</li>
-								</div>
-							))}
-						</ul>
-					)}
+									)
+								)}
+							</ul>
+						)}
 				</div>
 				<div className="grid-cols-2 grid-cols-3"></div>{' '}
 				{/* make sure tailwind pre-processes these*/}
