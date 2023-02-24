@@ -136,6 +136,7 @@ const WordList: React.FC = () => {
 	const [borderType, setBorderType] = useState<string>('');
 	const [divideType, setDivideType] = useState<string>('');
 	const [heightPx, setHeightPx] = useState<number>(14);
+	const [colorName, setColorName] = useState<string>('');
 
 	const font = watch('font');
 	const lineHeight = watch('lineHeight');
@@ -166,19 +167,34 @@ const WordList: React.FC = () => {
 	useEffect(() => {
 		const h = parseInt(
 			(
-				find(size_options, ({ value }) => value == size) ||
-				size_options[0]
+				find(
+					size_options,
+					({ value }: { value: string }) => value == size
+				) || size_options[0]
 			).label.slice(0, -2)
 		);
 		setHeightPx(h || 14);
 	}, [size]);
+
+	useEffect(() => {
+		let c = (
+			find(
+				color_options,
+				({ value }: { value: string }) => value == color
+			) || color_options[0]
+		).label.toLowerCase();
+		if(c == "black"){
+			c = "gray";
+		}
+		setColorName(c);
+	}, [color]);
 
 	const onSubmit = (data: FormData) => {
 		const minL = parseInt(data.minLetter);
 		const maxL = parseInt(data.maxLetter);
 		setDisplayedWords(
 			shuffle(
-				filter(words, (word) => {
+				filter(words, (word: string) => {
 					return word.length >= minL && word.length <= maxL;
 				})
 			).slice(0, data.numberOfWords)
@@ -413,6 +429,7 @@ const WordList: React.FC = () => {
 								numRows={displayedWords.length * 2}
 								widthStyle={writingPracticeWidth}
 								heightPx={heightPx}
+								color={colorName}
 							/>
 						)}
 					{writingPracticeLines &&
@@ -447,7 +464,7 @@ const WordList: React.FC = () => {
 							</ul>
 						)}
 				</div>
-				<div className="grid-cols-2 grid-cols-3"></div>{' '}
+				<div className="grid-cols-2 grid-cols-3 border-red-300 border-red-400 border-gray-300 border-gray-400 border-blue-300 border-blue-400 border-green-300 border-green-400"></div>
 				{/* make sure tailwind pre-processes these*/}
 			</div>
 		</div>
