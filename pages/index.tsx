@@ -413,7 +413,7 @@ const WordList: React.FC = () => {
 				<div>Score: ____________ </div>
 			</div>
 			<div
-				className={`flex justify-center w-full ${font} ${size} ${color} ${lineHeight} ${letterSpacing}`}
+				className={`flex justify-center w-full h-screen ${font} ${size} ${color} ${lineHeight} ${letterSpacing}`}
 			>
 				<div
 					className={`grid grid-cols-${
@@ -423,7 +423,7 @@ const WordList: React.FC = () => {
 					} ${gapSize || ''} mx-auto`}
 				>
 					{alphabet == 'y' && (
-						<div className="mt-6 flex flex-col">
+						<div className="mt-6 flex flex-wrap flex-col h-[99vh]">
 							{'abcdefghijklmnopqrstuvwxyz'
 								.split('')
 								.map((letter) => (
@@ -438,12 +438,12 @@ const WordList: React.FC = () => {
 					<div
 						className={`col-span-${
 							(writingPracticeLines ? 1 : 0) + 2
-						} mt-1 flex flex-row ${font == 'font-cursive' ? "mt-5" : ""}`}
+						} mt-1 flex flex-row flex-wrap w-full ${font == 'font-cursive' ? "mt-5" : ""}`}
 					>
 						{'abcdefghijklmnopqrstuvwxyz'
 							.split('')
 							.map((letter) => (
-								<div key={letter} className="mx-2">
+								<div key={letter} className={`mx-2 ${font == 'font-cursive' ? "mb-5" : ""}`}>
 									{letter.toUpperCase()} {letter}
 								</div>
 							))}
