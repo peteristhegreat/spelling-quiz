@@ -16,6 +16,12 @@ function replaceMiddleLetters(word: string): string {
 	return first + middle + last;
 }
 
+const show_alphabet_options = [
+	{ label: 'None', value: '' },
+	{ label: 'Vertical', value: 'y' },
+	{ label: 'Horizontal', value: 'x' }
+];
+
 const writing_practice_lines = [
 	{ label: 'None', value: '' },
 	{ label: 'Triple', value: 'triple' },
@@ -53,7 +59,8 @@ const font_options = [
 	{ label: 'Sans', value: 'font-sans' },
 	{ label: 'Serif', value: 'font-serif' },
 	{ label: 'Mono', value: 'font-mono' },
-	{ label: 'Cursive', value: 'font-cursive' }
+	{ label: 'Cursive', value: 'font-cursive' },
+	{ label: 'System-Cursive', value: 'font-system-cursive' }
 	// { label: 'Dyslexic', value: 'font-dyslexic' }
 ];
 
@@ -122,6 +129,7 @@ interface FormData {
 	maxLetter: string;
 	writingPracticeLines: string;
 	writingPracticeWidth: string;
+	alphabet: string;
 }
 
 const WordList: React.FC = () => {
@@ -148,6 +156,7 @@ const WordList: React.FC = () => {
 	const maxLetter = watch('maxLetter');
 	const writingPracticeLines = watch('writingPracticeLines');
 	const writingPracticeWidth = watch('writingPracticeWidth');
+	const alphabet = watch('alphabet');
 
 	useEffect(() => {
 		// console.log({writingPracticeLines})
@@ -183,8 +192,8 @@ const WordList: React.FC = () => {
 				({ value }: { value: string }) => value == color
 			) || color_options[0]
 		).label.toLowerCase();
-		if(c == "black"){
-			c = "gray";
+		if (c == 'black') {
+			c = 'gray';
 		}
 		setColorName(c);
 	}, [color]);
@@ -314,6 +323,19 @@ const WordList: React.FC = () => {
 						</select>
 					</div>
 					<div className="mx-2">
+						Alphabet
+						<select
+							className="form-select"
+							{...register('alphabet')}
+						>
+							{show_alphabet_options.map(({ value, label }) => (
+								<option key={value} value={value}>
+									{label}
+								</option>
+							))}
+						</select>
+					</div>
+					<div className="mx-2">
 						Min Letter
 						<select
 							className="form-select"
@@ -395,9 +417,39 @@ const WordList: React.FC = () => {
 			>
 				<div
 					className={`grid grid-cols-${
-						writingPracticeLines ? 3 : 2
+						(writingPracticeLines ? 1 : 0) +
+						(alphabet == 'y' ? 1 : 0) +
+						2
 					} ${gapSize || ''} mx-auto`}
 				>
+					{alphabet == 'y' && (
+						<div className="mt-6 flex flex-col">
+							{'abcdefghijklmnopqrstuvwxyz'
+								.split('')
+								.map((letter) => (
+									<div key={letter} className={font == "font-cursive" ? "my-4" : "my-1"}>
+										{letter.toUpperCase()} {letter}
+									</div>
+								))}
+						</div>
+					)}
+
+				{alphabet == 'x' && (
+					<div
+						className={`col-span-${
+							(writingPracticeLines ? 1 : 0) + 2
+						} mt-1 flex flex-row ${font == 'font-cursive' ? "mt-5" : ""}`}
+					>
+						{'abcdefghijklmnopqrstuvwxyz'
+							.split('')
+							.map((letter) => (
+								<div key={letter} className="mx-2">
+									{letter.toUpperCase()} {letter}
+								</div>
+							))}
+					</div>
+				)}
+
 					<ol
 						className={`mt-6 list-decimal ${divideType} divide-transparent`}
 					>
@@ -464,7 +516,7 @@ const WordList: React.FC = () => {
 							</ul>
 						)}
 				</div>
-				<div className="grid-cols-2 grid-cols-3 border-red-300 border-red-400 border-gray-300 border-gray-400 border-blue-300 border-blue-400 border-green-300 border-green-400"></div>
+				<div className="grid-cols-2 grid-cols-3 col-span-2 col-span-3 col-span-4 border-red-300 border-red-400 border-gray-300 border-gray-400 border-blue-300 border-blue-400 border-green-300 border-green-400"></div>
 				{/* make sure tailwind pre-processes these*/}
 			</div>
 		</div>
