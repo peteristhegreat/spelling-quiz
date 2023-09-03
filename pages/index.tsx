@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { filter, find, max, min, range, repeat, shuffle } from 'lodash';
 
 import { words } from '../utils/words';
 import { LinedTable } from '../components/LinedTable';
+import { set, get, createStore, UseStore } from 'idb-keyval';
 
 function replaceMiddleLetters(word: string): string {
 	if (word.length <= 2) {
@@ -130,7 +131,8 @@ const WordList: React.FC = () => {
 		handleSubmit,
 		watch,
 		formState: { errors },
-		setValue
+		setValue,
+		reset
 	} = useForm<FormData>();
 	const [displayedWords, setDisplayedWords] = useState<string[]>([]);
 	const [borderType, setBorderType] = useState<string>('');
@@ -147,6 +149,53 @@ const WordList: React.FC = () => {
 	const maxLetter = watch('maxLetter');
 	const writingPracticeLines = watch('writingPracticeLines');
 	const writingPracticeWidth = watch('writingPracticeWidth');
+
+	// Watch all fields. If any field changes, it triggers the useEffect below.
+	const watchedValues = watch();
+
+	const customStore = useRef<UseStore | null>(null);
+
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			customStore.current = createStore(
+				'spelling-quiz-db',
+				'spelling-quiz-store'
+			);
+		}
+	}, []);
+
+	// Retrieve data from idb-keyval on page load and reset the form.
+	useEffect(() => {
+		if (customStore) {
+			get<FormData>('formData', customStore.current as UseStore)
+				.then((data) => {
+					if (data && Object.keys(data).length > 0) {
+						console.log({ data });
+						reset(data);
+					}
+				})
+				.catch((error) => {
+					console.error(
+						'Failed to retrieve form data from IndexedDB:',
+						error
+					);
+				});
+		}
+	}, [reset]);
+
+	// Store data in idb-keyval whenever any field changes.
+	useEffect(() => {
+		if (customStore) {
+			console.log({ watchedValues });
+			set(
+				'formData',
+				watchedValues,
+				customStore.current as UseStore
+			).catch((error) => {
+				console.error('Failed to store form data in IndexedDB:', error);
+			});
+		}
+	}, [watchedValues]);
 
 	useEffect(() => {
 		// console.log({writingPracticeLines})
