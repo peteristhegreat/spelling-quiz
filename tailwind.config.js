@@ -13,7 +13,8 @@ module.exports = {
       fontFamily: {
         'comic': ["LDFComicSans"],
         // 'comic': ["Comic Sans MS", "Comic Sans", "Apple Chancery", "cursive"],
-        'cursive': ["Brush Script MT", "Brush Script Std", "cursive"]
+        'system-cursive': ["Brush Script MT", "Brush Script Std", "cursive"],
+        'cursive': ["GradeCursive"]
       },
     },
   },

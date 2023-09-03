@@ -17,6 +17,12 @@ function replaceMiddleLetters(word: string): string {
 	return first + middle + last;
 }
 
+const show_alphabet_options = [
+	{ label: 'None', value: '' },
+	{ label: 'Vertical', value: 'y' },
+	{ label: 'Horizontal', value: 'x' }
+];
+
 const writing_practice_lines = [
 	{ label: 'None', value: '' },
 	{ label: 'Triple', value: 'triple' },
@@ -54,7 +60,8 @@ const font_options = [
 	{ label: 'Sans', value: 'font-sans' },
 	{ label: 'Serif', value: 'font-serif' },
 	{ label: 'Mono', value: 'font-mono' },
-	{ label: 'Cursive', value: 'font-cursive' }
+	{ label: 'Cursive', value: 'font-cursive' },
+	{ label: 'System-Cursive', value: 'font-system-cursive' }
 	// { label: 'Dyslexic', value: 'font-dyslexic' }
 ];
 
@@ -123,6 +130,7 @@ interface FormData {
 	maxLetter: string;
 	writingPracticeLines: string;
 	writingPracticeWidth: string;
+	alphabet: string;
 }
 
 const WordList: React.FC = () => {
@@ -138,6 +146,7 @@ const WordList: React.FC = () => {
 	const [borderType, setBorderType] = useState<string>('');
 	const [divideType, setDivideType] = useState<string>('');
 	const [heightPx, setHeightPx] = useState<number>(14);
+	const [colorName, setColorName] = useState<string>('');
 
 	const font = watch('font');
 	const lineHeight = watch('lineHeight');
@@ -149,6 +158,7 @@ const WordList: React.FC = () => {
 	const maxLetter = watch('maxLetter');
 	const writingPracticeLines = watch('writingPracticeLines');
 	const writingPracticeWidth = watch('writingPracticeWidth');
+	const alphabet = watch('alphabet');
 
 	// Watch all fields. If any field changes, it triggers the useEffect below.
 	const watchedValues = watch();
@@ -215,19 +225,34 @@ const WordList: React.FC = () => {
 	useEffect(() => {
 		const h = parseInt(
 			(
-				find(size_options, ({ value }) => value == size) ||
-				size_options[0]
+				find(
+					size_options,
+					({ value }: { value: string }) => value == size
+				) || size_options[0]
 			).label.slice(0, -2)
 		);
 		setHeightPx(h || 14);
 	}, [size]);
+
+	useEffect(() => {
+		let c = (
+			find(
+				color_options,
+				({ value }: { value: string }) => value == color
+			) || color_options[0]
+		).label.toLowerCase();
+		if (c == 'black') {
+			c = 'gray';
+		}
+		setColorName(c);
+	}, [color]);
 
 	const onSubmit = (data: FormData) => {
 		const minL = parseInt(data.minLetter);
 		const maxL = parseInt(data.maxLetter);
 		setDisplayedWords(
 			shuffle(
-				filter(words, (word) => {
+				filter(words, (word: string) => {
 					return word.length >= minL && word.length <= maxL;
 				})
 			).slice(0, data.numberOfWords)
@@ -347,6 +372,19 @@ const WordList: React.FC = () => {
 						</select>
 					</div>
 					<div className="mx-2">
+						Alphabet
+						<select
+							className="form-select"
+							{...register('alphabet')}
+						>
+							{show_alphabet_options.map(({ value, label }) => (
+								<option key={value} value={value}>
+									{label}
+								</option>
+							))}
+						</select>
+					</div>
+					<div className="mx-2">
 						Min Letter
 						<select
 							className="form-select"
@@ -424,13 +462,43 @@ const WordList: React.FC = () => {
 				<div>Score: ____________ </div>
 			</div>
 			<div
-				className={`flex justify-center w-full ${font} ${size} ${color} ${lineHeight} ${letterSpacing}`}
+				className={`flex justify-center w-full h-screen ${font} ${size} ${color} ${lineHeight} ${letterSpacing}`}
 			>
 				<div
 					className={`grid grid-cols-${
-						writingPracticeLines ? 3 : 2
+						(writingPracticeLines ? 1 : 0) +
+						(alphabet == 'y' ? 1 : 0) +
+						2
 					} ${gapSize || ''} mx-auto`}
 				>
+					{alphabet == 'y' && (
+						<div className="mt-6 flex flex-wrap flex-col h-[99vh]">
+							{'abcdefghijklmnopqrstuvwxyz'
+								.split('')
+								.map((letter) => (
+									<div key={letter} className={font == "font-cursive" ? "my-4" : "my-1"}>
+										{letter.toUpperCase()} {letter}
+									</div>
+								))}
+						</div>
+					)}
+
+				{alphabet == 'x' && (
+					<div
+						className={`col-span-${
+							(writingPracticeLines ? 1 : 0) + 2
+						} mt-1 flex flex-row flex-wrap w-full ${font == 'font-cursive' ? "mt-5" : ""}`}
+					>
+						{'abcdefghijklmnopqrstuvwxyz'
+							.split('')
+							.map((letter) => (
+								<div key={letter} className={`mx-2 ${font == 'font-cursive' ? "mb-5" : ""}`}>
+									{letter.toUpperCase()} {letter}
+								</div>
+							))}
+					</div>
+				)}
+
 					<ol
 						className={`mt-6 list-decimal ${divideType} divide-transparent`}
 					>
@@ -462,6 +530,7 @@ const WordList: React.FC = () => {
 								numRows={displayedWords.length * 2}
 								widthStyle={writingPracticeWidth}
 								heightPx={heightPx}
+								color={colorName}
 							/>
 						)}
 					{writingPracticeLines &&
@@ -496,7 +565,7 @@ const WordList: React.FC = () => {
 							</ul>
 						)}
 				</div>
-				<div className="grid-cols-2 grid-cols-3"></div>{' '}
+				<div className="grid-cols-2 grid-cols-3 col-span-2 col-span-3 col-span-4 border-red-300 border-red-400 border-gray-300 border-gray-400 border-blue-300 border-blue-400 border-green-300 border-green-400"></div>
 				{/* make sure tailwind pre-processes these*/}
 			</div>
 		</div>

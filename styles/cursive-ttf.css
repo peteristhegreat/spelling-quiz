@@ -1,0 +1,14 @@
+/* https://www.dafont.com/5th-grade-cursive.font */
+@font-face {
+    font-family: 'GradeCursive';
+    src: local(''), url('/fonts/cursive/5thgradecursive-2.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'GradeCursive-italic';
+    src: local(''), url('/fonts/cursive/5thgradecursive-2-italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
