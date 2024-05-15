@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 
 import { filter, find, max, min, range, repeat, shuffle } from 'lodash';
 
-import { words } from '../utils/words';
+import { categories, words } from '../utils/words';
 import { LinedTable } from '../components/LinedTable';
 import { set, get, createStore, UseStore } from 'idb-keyval';
 
@@ -119,6 +119,7 @@ const line_height_options = [
 ];
 
 interface FormData {
+	wordList: string;
 	numberOfWords: number;
 	gapSize: string;
 	font: string;
@@ -144,6 +145,7 @@ const WordList: React.FC = () => {
 	} = useForm<FormData>();
 	const [displayedWords, setDisplayedWords] = useState<string[]>([]);
 	const [borderType, setBorderType] = useState<string>('');
+	// const [wordListOption, setWordList] = useState<string>('Frequency');
 	const [divideType, setDivideType] = useState<string>('');
 	const [heightPx, setHeightPx] = useState<number>(14);
 	const [colorName, setColorName] = useState<string>('');
@@ -159,6 +161,7 @@ const WordList: React.FC = () => {
 	const writingPracticeLines = watch('writingPracticeLines');
 	const writingPracticeWidth = watch('writingPracticeWidth');
 	const alphabet = watch('alphabet');
+	const wordList = watch('wordList') || "Frequency";
 
 	// Watch all fields. If any field changes, it triggers the useEffect below.
 	const watchedValues = watch();
@@ -252,7 +255,7 @@ const WordList: React.FC = () => {
 		const maxL = parseInt(data.maxLetter);
 		setDisplayedWords(
 			shuffle(
-				filter(words, (word: string) => {
+				filter(words[wordList], (word: string) => {
 					return word.length >= minL && word.length <= maxL;
 				})
 			).slice(0, data.numberOfWords)
@@ -263,6 +266,19 @@ const WordList: React.FC = () => {
 		<div className="max-w-none prose md:prose-lg lg:prose-xl w-full p-6 text-gra">
 			<form className="block" onSubmit={handleSubmit(onSubmit)}>
 				<div className="flex flex-wrap ml-auto print:hidden mb-6">
+					<div className="mx-2">
+						Word List
+						<select
+							className="form-select"
+							{...register('wordList')}
+						>
+							{categories.map((value, index) => (
+								<option key={value} value={value}>
+									{value}
+								</option>
+							))}
+						</select>
+					</div>
 					<div className="mx-2">
 						Column Gap
 						<select
@@ -434,7 +450,7 @@ const WordList: React.FC = () => {
 						type="number"
 						defaultValue="10"
 						min="1"
-						max={words.length || 1000}
+						max={words[wordList].length || 1000}
 						{...register('numberOfWords')}
 					/>
 					{errors?.numberOfWords && <p>This field is required</p>}
