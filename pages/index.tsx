@@ -274,7 +274,7 @@ const WordList: React.FC = () => {
 						>
 							{categories.map((value, index) => (
 								<option key={value} value={value}>
-									{value}
+									{value} ({words[value].length})
 								</option>
 							))}
 						</select>
